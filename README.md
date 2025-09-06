@@ -17,7 +17,7 @@ https://mindcare-the-mental-health-journal.streamlit.app/
 ## Installation
 Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Visshu78/MindCare
 cd mindcare_app
 ```
 Install the required dependencies:
