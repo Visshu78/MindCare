@@ -29,12 +29,15 @@ def journal_tab(sentiment_pipeline):
                 emotion = "CRISIS"
                 sentiment = "CRISIS"
                 confidence = 1.0
+                top_attended_words = []
             else:
+                top_attended_words = []
                 if sentiment_pipeline:
                     result = sentiment_pipeline(journal_entry)[0]
                     emotion = result['label']
                     sentiment = map_emotion_to_sentiment(emotion)
                     confidence = result['score']
+                    top_attended_words = result.get('top_attended_words', [])
                 else:
                     # Fallback if model is not available
                     emotion = "NEUTRAL"
@@ -79,6 +82,8 @@ def journal_tab(sentiment_pipeline):
             sentiment_color = "green" if sentiment == "POSITIVE" else "red" if sentiment == "NEGATIVE" else "orange" if sentiment == "CRISIS" else "blue"
             st.markdown(f"**Detected emotion:** {emotion.capitalize()}")
             st.markdown(f"**Overall sentiment:** :{sentiment_color}[{sentiment}] ({(confidence*100):.1f}% confidence)")
+            if top_attended_words:
+                st.caption(f"🧠 *Key emotional words detected by MindCare Attention Model:* " + " • ".join([f"**{w}**" for w in top_attended_words]))
         else:
             st.warning("Please write something before saving.")
 
