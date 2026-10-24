@@ -8,12 +8,16 @@ import plotly.graph_objects as go
 
 def load_metrics_data(dataset_key="emotion"):
     """Load benchmark metrics and confusion matrices."""
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     filename = "reddit_summary_metrics.json" if dataset_key == "reddit" else "summary_metrics.json"
-    metrics_path = os.path.join(base_dir, "model_experiments", "results", filename)
-    if os.path.exists(metrics_path):
-        with open(metrics_path, "r") as f:
-            return json.load(f)
+    comp_dir = os.path.dirname(os.path.abspath(__file__))
+    candidate_paths = [
+        os.path.abspath(os.path.join(comp_dir, "..", "model_experiments", "results", filename)),
+        os.path.abspath(os.path.join(comp_dir, "..", "..", "model_experiments", "results", filename))
+    ]
+    for metrics_path in candidate_paths:
+        if os.path.exists(metrics_path):
+            with open(metrics_path, "r") as f:
+                return json.load(f)
     return None
 
 def compute_classification_matrix(cm, labels):

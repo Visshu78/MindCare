@@ -24,3 +24,8 @@ journal.db.bak
 ref_temp.pdf
 Report_original.pdf
 SampleReport.pdf
+
+# Large binary model checkpoints (>100MB)
+*.pt
+model_experiments/saved_models/
+model_experiments/data/

@@ -7,18 +7,28 @@ from auth import (
     create_user, verify_user, check_authentication, login_section
 )
 
-# Ensure project root is in sys.path so model_experiments is accessible
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# Ensure both current directory and parent directory are in sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+for p in [current_dir, parent_dir]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 
 @st.cache_resource(show_spinner="Loading MindCare Deep Learning Model (DistilBERT + BiGRU + Attention)...")
 def load_model():
     """Load the trained MindCare Proposed Deep Learning Model (DistilBERT + BiGRU + Attention)."""
     try:
-        from model_experiments.predictor import MindCarePredictor
-        checkpoint_path = os.path.join(project_root, "model_experiments", "saved_models", "proposed_best.pt")
+        try:
+            from model_experiments.predictor import MindCarePredictor
+        except (ImportError, ModuleNotFoundError):
+            from predictor import MindCarePredictor
+
+        candidate_paths = [
+            os.path.join(current_dir, "model_experiments", "saved_models", "proposed_best.pt"),
+            os.path.join(parent_dir, "model_experiments", "saved_models", "proposed_best.pt")
+        ]
+        checkpoint_path = next((p for p in candidate_paths if os.path.exists(p)), candidate_paths[0])
         predictor = MindCarePredictor(checkpoint_path=checkpoint_path)
         return predictor
     except Exception as e:
